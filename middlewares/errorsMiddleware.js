@@ -1,5 +1,7 @@
 module.exports = function ( err, req, res, next){
+
     console.log(err);
-    res.status(500).end("ops... qualcosa è andato storto")
-    next();
+
+    res.status(422).json({ errors: errors.array() });
+    
 }

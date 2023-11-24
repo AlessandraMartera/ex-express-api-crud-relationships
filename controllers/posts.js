@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient;
-
+const errorValidation = require('../middlewares/errorsMiddleware')
+const { validationResult } = require("express-validator");
 const createSlug = require("../utilities/creatSlug")
 
 async function index(req, res) {
@@ -11,7 +12,6 @@ async function index(req, res) {
     if(filters && filters.title){
         queryFilter.title = { contains: filters.title };
     }
-
     if(filters && filters.published){
         queryFilter.publishedFilter = { equals: filters.published === "true" || filters.published === "1" };
     }
@@ -26,8 +26,8 @@ async function index(req, res) {
 }
 
 async function show(req, res, next) {
-    const { id } = req.params;
 
+    const { id } = req.params;
     const data = await prisma.post.findUnique({
         where: {
             id: parseInt(id)
@@ -49,17 +49,20 @@ async function show(req, res, next) {
     } else{
         res.json(data)
     }
-
-    
     console.log("show");
 }
 
 async function store(req, res) {
 
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+
+
     const newPost = req.body;
-
     const slug = await createSlug(newPost.title);
-
     const data = await prisma.post.create({
         data:{
             "title": newPost.title,  
@@ -73,8 +76,7 @@ async function store(req, res) {
             }
         }
     })
-
-    res.json(data)
+    res.json(data);
     console.log("store");
 }
 
@@ -99,13 +101,11 @@ async function update(req, res) {
     })
     .then()
     .catch(err => console.log(err))
-
     res.json(data).send(`il post numero ${id} è stato aggiornato con successo`)
     console.log("update");
 }
 
 async function destroy(req, res) {
-
     const { id } = req.params;
     const data = await prisma.post.delete({
         where:{
@@ -114,7 +114,6 @@ async function destroy(req, res) {
     })
     .then()
     .catch(err => console.log(err))
-
     res.json(data).send(`il post numero ${id} è stato rimosso con successo`)
     console.log(`destroy`);
 }

@@ -1,7 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const app = express();
-
 const RouterPost = require('./routers/Posts');
 const RouterCategory = require('./routers/Categories');
 const RouterTag = require('./routers/Tags');
