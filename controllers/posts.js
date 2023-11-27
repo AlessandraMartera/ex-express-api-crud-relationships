@@ -55,11 +55,11 @@ async function show(req, res, next) {
 async function store(req, res) {
 
     const errors = validationResult(req);
+    // errorValidation(errors);
+
     if (!errors.isEmpty()){
         return res.status(422).json({ errors: errors.array() });
     }
-
-
 
     const newPost = req.body;
     const slug = await createSlug(newPost.title);
@@ -107,16 +107,41 @@ async function update(req, res) {
 
 async function destroy(req, res) {
     const { id } = req.params;
+    /*
     const data = await prisma.post.delete({
         where:{
             id: parseInt(id)
+        },
+    })
+    .then()
+    .catch(err => console.log(err))
+    res.json(data).send(`il post numero ${id} è stato rimosso con successo`)
+    console.log(`destroy`);
+*/
+
+    const data = await prisma.post.update({
+        where:{
+            id: parseInt(id)
+        },
+        data:{
+            category: {
+                disconnect: true
+            },
+            tags:{
+                deleteMany: []
+            }
         }
     })
     .then()
     .catch(err => console.log(err))
     res.json(data).send(`il post numero ${id} è stato rimosso con successo`)
     console.log(`destroy`);
+
+
+
 }
+
+
 
 module.exports = {
     index,

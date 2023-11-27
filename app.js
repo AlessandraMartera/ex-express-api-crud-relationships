@@ -8,7 +8,7 @@ const RouterTag = require('./routers/Tags');
 app.use(express.json());
 
 app.use("/posts", RouterPost);
-app.use("/catergories", RouterCategory);
+app.use("/categories", RouterCategory);
 app.use("/tags", RouterTag);
 
 app.use(require('./middlewares/errorsMiddleware'));

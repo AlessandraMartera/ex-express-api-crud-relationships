@@ -1,7 +1,10 @@
-module.exports = function ( err, req, res, next){
-
-    console.log(err);
-
-    res.status(422).json({ errors: errors.array() });
-    
-}
+class ValidationError extends Error {
+    constructor(message, errors) {
+      super(message);
+  
+      this.status = 400;
+      this.errors = errors
+    }
+  }
+  
+  module.exports = ValidationError;
