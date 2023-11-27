@@ -3,6 +3,8 @@ const router = express.Router();
 const postsController = require('../controllers/posts');
 const { body, checkSchema } = require("express-validator");
 
+const postCreate = require("../validations/postCreate");
+
 router.get('/', postsController.index);
 
 router.get('/:id', postsController.show);
@@ -16,7 +18,7 @@ body("published").isBoolean(),
 
 postsController.store);
 
-router.put('/:id', postsController.update);
+router.put('/:id', checkSchema(postCreate), postsController.update);
 
 router.delete('/:id', postsController.destroy);
 
