@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient;
 const errorValidation = require('../middlewares/errorsMiddleware')
-const { validationResult } = require("express-validator");
+const { validationResult, matchedData } = require("express-validator");
 const createSlug = require("../utilities/creatSlug")
 
 async function index(req, res) {
@@ -60,8 +60,10 @@ async function store(req, res) {
     if (!errors.isEmpty()){
         return res.status(422).json({ errors: errors.array() });
     }
-
-    const newPost = req.body;
+    
+    // il macthedData serve come lista bianca dei soli dati che devo prendere, 
+    // che ho dischiarato all'interno delle validazioni delle rotte
+    const newPost = matchedData(req.body);
     const slug = await createSlug(newPost.title);
     const data = await prisma.post.create({
         data:{
